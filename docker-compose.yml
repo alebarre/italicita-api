@@ -1,0 +1,36 @@
+# docker-compose.yml (atualizado)
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: italicita-postgres
+    environment:
+      POSTGRES_DB: italicita_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - italicita-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: italicita-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@italicita.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    networks:
+      - italicita-network
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+
+networks:
+  italicita-network:
+    driver: bridge
